@@ -1,18 +1,18 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 
 trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-24.04'
 
 steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 - task: Maven@4
-  displayName: 'Build and Run Regression Tests'
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'clean test'
@@ -20,5 +20,12 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.17'
-    jdkArchitectureOption: 'x64'
+    mavenVersionOption: 'Default'
 
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    testRunTitle: 'JUnit Regression Test Results'
+    failTaskOnFailedTests: true
