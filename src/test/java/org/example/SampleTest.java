@@ -8,6 +8,6 @@ public class SampleTest {
 
     @Test
     public void testHelloWorld() {
-        assertEquals("Hello World", "Hello World");
+        assertEquals("Hello World", "HelloWorld");
     }
 }
